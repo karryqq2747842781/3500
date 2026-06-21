@@ -3,381 +3,138 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>2048</title>
+<title>💕 韩舒雨想你了</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#faf8ef;display:flex;justify-content:center;align-items:center;min-height:100dvh;padding:16px}
-.container{width:100%;max-width:420px}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-h1{font-size:48px;color:#776e65;font-weight:700;line-height:1}
-.score-box{background:#bbada0;color:#fff;border-radius:6px;padding:6px 16px;text-align:center;min-width:80px}
-.score-box .label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;opacity:.8}
-.score-box .num{font-size:22px;font-weight:700;line-height:1.2}
-.best-box{background:#bbada0;color:#fff;border-radius:6px;padding:6px 16px;text-align:center;min-width:80px;margin-left:8px}
-.best-box .label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;opacity:.8}
-.best-box .num{font-size:22px;font-weight:700;line-height:1.2}
-.sub-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.sub-header .desc{color:#776e65;font-size:14px}
-.btn-new{background:#8f7a66;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:15px;cursor:pointer;font-weight:600;transition:background .15s}
-.btn-new:active{background:#7a6458}
-.grid{position:relative;background:#bbada0;border-radius:8px;padding:8px;aspect-ratio:1;touch-action:none}
-.cells{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;height:100%}
-.cell{background:rgba(238,228,218,.35);border-radius:6px;aspect-ratio:1}
-.tile-container{position:absolute;top:8px;left:8px;right:8px;bottom:8px;pointer-events:none}
-.tile{position:absolute;display:flex;justify-content:center;align-items:center;font-weight:700;border-radius:6px;transition:transform .1s ease,opacity .12s ease;z-index:1}
-.tile-merged{z-index:2}
-.tile-new{z-index:3}
-.tile-2{background:#eee4da;color:#776e65}.tile-4{background:#ede0c8;color:#776e65}
-.tile-8{background:#f2b179;color:#f9f6f2}.tile-16{background:#f59563;color:#f9f6f2}
-.tile-32{background:#f67c5f;color:#f9f6f2}.tile-64{background:#f65e3b;color:#f9f6f2}
-.tile-128{background:#edcf72;color:#f9f6f2;font-size:42px}.tile-256{background:#edcc61;color:#f9f6f2;font-size:42px}
-.tile-512{background:#edc850;color:#f9f6f2;font-size:42px}.tile-1024{background:#edc53f;color:#f9f6f2;font-size:36px}
-.tile-2048{background:#edc22e;color:#f9f6f2;font-size:36px}.tile-super{background:#3c3a32;color:#f9f6f2;font-size:28px}
-.game-over,.game-win{position:absolute;inset:0;background:rgba(238,228,218,.73);border-radius:8px;display:none;justify-content:center;align-items:center;flex-direction:column;z-index:10}
-.game-over.show,.game-win.show{display:flex}
-.game-over .title,.game-win .title{font-size:48px;font-weight:700;color:#776e65;margin-bottom:16px}
-.game-win .title{color:#edc22e}
-.game-over .btn-retry,.game-win .btn-retry{background:#8f7a66;color:#fff;border:none;border-radius:6px;padding:12px 32px;font-size:18px;cursor:pointer;font-weight:600;transition:background .15s}
-.game-over .btn-retry:active,.game-win .btn-retry:active{background:#7a6458}
-.keep-going{background:transparent;border:2px solid #8f7a66;border-radius:6px;padding:10px 24px;font-size:16px;cursor:pointer;font-weight:600;color:#776e65;margin-top:12px;transition:background .15s}
-.keep-going:active{background:rgba(143,122,102,.15)}
-.footer{text-align:center;margin-top:20px;color:#776e65;font-size:13px;opacity:.6}
-.swipe-hint{display:flex;justify-content:center;gap:16px;margin-top:12px;color:#776e65;font-size:20px;opacity:.4}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  overflow: hidden;
+}
+.container{position:relative;width:500px;height:500px;max-width:95vw;max-height:95vw}
+canvas{position:absolute;inset:0;width:100%;height:100%}
+.falling-hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.falling-hearts span{
+  position:absolute;top:-10%;font-size:20px;animation:fall linear infinite;
+  opacity:.15;
+}
+@keyframes fall{
+  0%{transform:translateY(-10vh) rotate(0deg);opacity:0}
+  10%{opacity:.15}
+  90%{opacity:.15}
+  100%{transform:translateY(110vh) rotate(720deg);opacity:0}
+}
+.bottom-text{
+  position:fixed;bottom:30px;left:0;right:0;text-align:center;
+  color:rgba(255,255,255,.25);font-size:14px;letter-spacing:2px;z-index:5;
+  font-weight:300;
+}
 </style>
 </head>
 <body>
+
 <div class="container">
-  <div class="header">
-    <h1>2048</h1>
-    <div style="display:flex">
-      <div class="score-box">
-        <div class="label">分数</div>
-        <div class="num" id="score">0</div>
-      </div>
-      <div class="best-box">
-        <div class="label">最高</div>
-        <div class="num" id="best">0</div>
-      </div>
-    </div>
-  </div>
-  <div class="sub-header">
-    <span class="desc">滑动方块合成 <strong>2048</strong></span>
-    <button class="btn-new" id="btnNew">新一局</button>
-  </div>
-  <div class="grid" id="grid">
-    <div class="cells">
-      <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-      <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-      <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-      <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-    </div>
-    <div class="tile-container" id="tileContainer"></div>
-    <div class="game-over" id="gameOver">
-      <div class="title">游戏结束</div>
-      <button class="btn-retry" id="retryBtn">再来一局</button>
-    </div>
-    <div class="game-win" id="gameWin">
-      <div class="title">🎉 你赢了！</div>
-      <button class="btn-retry" id="winRetryBtn">再来一局</button>
-      <button class="keep-going" id="keepGoing">继续挑战</button>
-    </div>
-  </div>
-  <div class="swipe-hint">← ↑ → ↓</div>
-  <div class="footer">在方块中滑动即可移动</div>
+  <canvas id="heartCanvas"></canvas>
 </div>
+
+<div class="falling-hearts" id="fallingHearts"></div>
+<div class="bottom-text">💕 100次想念，每一次都是你</div>
+
 <script>
-// ─── Mini State ──────────────────────────────────────────────
-const SIZE=4,S=12;let grid,best=+localStorage.getItem('g2048_best')||0,score=0,over=0,won=0,skipWin=0;
-const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
-$('#best').textContent=best;
+const canvas = document.getElementById('heartCanvas');
+const ctx = canvas.getContext('2d');
 
-function emptyGrid(){return Array.from({length:SIZE},()=>Array(SIZE).fill(0))}
-function clone(g){return g.map(r=>[...r])}
+function resize(){
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * window.devicePixelRatio;
+  canvas.height = rect.height * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  return {w: rect.width, h: rect.height};
+}
 
-// ─── Spawn ──────────────────────────────────────────────────
-function spawn(g){let e=[];for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++)if(!g[y][x])e.push([y,x]);if(!e.length)return 0;let[y,x]=e[Math.random()*e.length|0];g[y][x]=Math.random()<.9?2:4;return 1}
+const points = [(252.06653110915028, 212.06653110915028, 0), (247.86163912879846, 206.67755725894656, 1), (253.17721391979666, 208.27418639658984, 2), (249.90154809412928, 198.5826048400638, 3), (251.86155165011363, 191.38831751358967, 4), (257.34731353933233, 185.06053879530512, 5), (262.93465041549877, 176.36941142763945, 6), (266.23326054872786, 163.22413075900747, 7), (273.4053556133913, 152.17751950174264, 8), (284.2385224297508, 143.4816457187963, 9), (295.9171730407464, 134.83979843439758, 10), (307.72833351638235, 126.09158547958248, 11), (321.7025962727067, 119.83299271712035, 12), (335.32503693116337, 114.10716468809481, 13), (350.1089902628465, 110.95965522728397, 14), (371.4013562193068, 116.22752694832273, 15), (383.9975670542219, 115.14096206046496, 16), (400.86769479928563, 121.0392006453304, 17), (414.02516767552254, 126.232411916946, 18), (431.1088449176719, 138.58019225705323, 19), (445.1273069230114, 151.23531755331112, 20), (451.5339110842083, 159.72092597562786, 21), (465.0558782294362, 178.76391353661197, 22), (471.29194454032995, 193.89852776749117, 23), (473.9506343437177, 208.71164172801355, 24), (473.2617738143423, 223.26177381434232, 25), (474.16032401409586, 242.27043412386243, 26), (469.63373635044763, 258.4765915453575, 27), (459.98436497158957, 271.90549930679293, 28), (453.83292852807926, 290.87770027951257, 29), (442.92795825359923, 306.8231065213767, 30), (427.11975944125817, 319.2587588959593, 31), (413.4021091986429, 334.8336725929563, 32), (401.1577618798318, 352.5771018908843, 33), (385.0020427023799, 366.7448143545886, 34), (368.9020710038571, 380.9412384798618, 35), (351.4402221598351, 393.3863934752521, 36), (337.8630133443983, 408.9690292548167, 37), (322.6920143688975, 421.86273462063133, 38), (306.27316366254263, 432.08144174582594, 39), (295.2403977289293, 445.95016076005834, 40), (283.7466024228354, 457.34375167421524, 41), (275.8816812478522, 470.11320757852843, 42), (264.5215749957532, 476.94285862243197, 43), (260.6258251884558, 488.6555867362759, 44), (255.24115585629866, 496.22297891532884, 45), (255.77487157040397, 507.0436649491026, 46), (250.58483786654523, 509.5360900496096, 47), (250.72995525895914, 514.8891958044802, 48), (247.45675752218057, 514.5463187594129, 49), (249.9852194125516, 517.9852194125516, 50), (248.40565291213196, 515.6061214776125, 51), (252.42912086176483, 517.4703779842083, 52), (249.2290885284418, 511.12786137466196, 53), (249.03659472364032, 507.19591432571707, 54), (240.932135755622, 495.13376555464043, 55), (241.62090521522086, 491.99988658889856, 56), (229.96513032176665, 476.9669418679033, 57), (225.43942253249875, 469.7611897773849, 58), (213.88463456622333, 456.40274038332467, 59), (203.35808305579587, 445.04536103213877, 60), (191.95286842055313, 433.7892588944835, 61), (180.71277719469066, 423.5938418475756, 62), (162.8998493700704, 407.5478372422297, 63), (147.3889305367395, 394.2711399254295, 64), (130.878560625858, 380.13753484185094, 65), (112.59642315761681, 363.99605561930036, 66), (96.71297120022805, 349.60389389330163, 67), (85.51243511816415, 338.81915550352375, 68), (71.0593557576021, 323.29053512604395, 69), (59.765146561578966, 309.04723256128517, 70), (45.39830586971549, 289.53150603156683, 71), (35.1339379782814, 271.6683162145499, 72), (29.936139810863622, 256.26450106692226, 73), (29.481794254395016, 242.94505719767386, 74), (25.705070804870054, 223.7050708048701, 75), (26.546763429821667, 206.66092364763003, 76), (33.051939184126, 193.14402847243593, 77), (39.580246922154274, 177.90152613039538, 78), (44.327802765790636, 159.6032460676283, 79), (55.93547781359533, 147.4304261758237, 80), (69.98955252575107, 137.5530797788732, 81), (81.93074482027866, 126.01314605274881, 82), (99.24114567779195, 120.88423420585785, 83), (116.56075637766382, 117.36101219338177, 84), (129.58762886813045, 111.6336063371346, 85), (149.2811365791321, 115.06783961684282, 86), (161.10474282320715, 113.4288425418797, 87), (177.52976106131317, 119.37050190687778, 88), (189.47248779241983, 123.86385214626684, 89), (202.73326521191936, 132.63340555078435, 90), (213.04064484406075, 141.20472469882762, 91), (224.4811472286148, 153.34355203117607, 92), (235.18379619642957, 166.75519432616696, 93), (239.10619940829102, 174.89018024628925, 94), (244.9510654998645, 185.88409749582553, 95), (245.77830274905907, 192.19559483591308, 96), (246.69346315602115, 198.32204056511148, 97), (248.6973809521152, 204.67637000583065, 98), (249.36841478553794, 208.29524024393416, 99)];
 
-// ─── Slide ──────────────────────────────────────────────────
-function slideRow(r){let f=r.filter(v=>v),n=Array(SIZE).fill(0),s=0,a=[];for(let i=0;i<f.length;i++){if(i+1<f.length&&f[i]===f[i+1]){n[s]=f[i]*2;score+=n[s];i++;a.push(n[s])}else{n[s]=f[i];a.push(f[i])}s++}return{n,a,p:n.join(',')!==r.join(',')}}
+let alpha = 0;
+const allColors = ['#ff4d6d', '#ff6b6b', '#ff8e8e', '#ffb3b3', '#ffc2d1', '#ff4d6d', '#c9184a', '#a4133c'];
 
-function move(g,d){let r=clone(g),p=0;score=0;let m=[];for(let i=0;i<SIZE;i++){let col;if(d==='l')col=slideRow(g[i]);else if(d==='r'){col=slideRow([...g[i]].reverse());col.n=col.n.reverse()}else if(d==='u'){let c=[];for(let j=0;j<SIZE;j++)c.push(g[j][i]);col=slideRow(c)}else if(d==='d'){let c=[];for(let j=SIZE-1;j>=0;j--)c.push(g[j][i]);col=slideRow(c);col.n=col.n.reverse()}if(col.p)p=1;let mv=col.n;for(let j=0;j<SIZE;j++){if(d==='l')g[i][j]=mv[j];else if(d==='r')g[i][j]=mv[j];else if(d==='u')g[j][i]=mv[j];else if(d==='d')g[j][i]=mv[j]}}return p}
+function drawHeart(){
+  const {w,h} = resize();
+  ctx.clearRect(0,0,w,h);
 
-// ─── Render ─────────────────────────────────────────────────
-function render(g,{merged,newTile,moved}=[]){
-  const tc=$('#tileContainer'),gap=8,size=tc.clientWidth,cell=size/SIZE;
-  tc.innerHTML='';
-  let max=0;
-  for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){
-    let v=g[y][x];if(!v)continue;
-    if(v>max)max=v;
-    let el=document.createElement('div');el.className='tile';
-    let cls='tile-'+v;if(v>2048)cls='tile-super';
-    el.classList.add(cls);
-    let s=getSize(v);
-    el.style.width=cell-gap+'px';el.style.height=cell-gap+'px';
-    el.style.left=x*cell+gap/2+'px';el.style.top=y*cell+gap/2+'px';
-    el.style.fontSize=s+'px';
-    el.textContent=v;
-    // animation
-    if(moved&&moved.some(([my,mx])=>my===y&&mx===x)){
-      if(newTile&&newTile[0]===y&&newTile[1]===x){
-        el.style.transform='scale(0)';el.classList.add('tile-new');
-        requestAnimationFrame(()=>{el.style.transform='scale(1)'})
-      } else if(merged&&merged.some(([my,mx])=>my===y&&mx===x)){
-        el.classList.add('tile-merged');
-        el.style.transform='scale(1.2)';requestAnimationFrame(()=>{el.style.transform='scale(1)'})
+  // 发光效果
+  ctx.shadowColor = '#ff4d6d';
+  ctx.shadowBlur = 20;
+
+  // 绘制爱心连接线 (小点之间连线)
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(255,77,109,0.08)';
+  ctx.lineWidth = 1;
+  for(let i=0; i<points.length; i++){
+    for(let j=i+1; j<points.length; j++){
+      const dx = points[i][0] - points[j][0];
+      const dy = points[i][1] - points[j][1];
+      if(dx*dx + dy*dy < 1200){
+        ctx.moveTo(points[i][0], points[i][1]);
+        ctx.lineTo(points[j][0], points[j][1]);
       }
     }
-    tc.appendChild(el);
   }
-  // update score
-  let total=0;for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++)total+=g[y][x];
-  // actually we track score in move()
-  // but we need current game score - reconstruct
-  // simpler: use a running var
+  ctx.stroke();
+
+  // 绘制每个字
+  ctx.shadowBlur = 12;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  const glow = 0.4 + 0.6 * Math.abs(Math.sin(alpha));
+
+  for(let i=0; i<points.length; i++){
+    const [x,y,idx] = points[i];
+    const color = allColors[idx % allColors.length];
+
+    // 光晕
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 15 * glow;
+
+    // 主文字
+    const size = 11 + 2 * Math.sin(alpha + i * 0.3);
+    ctx.font = `bold ${size}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+    ctx.fillStyle = color;
+    ctx.fillText('❤', x, y-1);
+
+    // 小字标签
+    ctx.font = `${size * 0.7}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.shadowBlur = 8;
+    ctx.fillText('韩舒雨想你了', x, y + 2);
+  }
+
+  alpha += 0.02;
+  requestAnimationFrame(drawHeart);
 }
 
-function getSize(v){if(v<100)return 52;if(v<1000)return 40;if(v<10000)return 32;return 24}
+drawHeart();
 
-// ─── Full Render + Overlay ──────────────────────────────────
-let gameScore=0;
-function fullRender(g,movedData){
-  const tc=$('#tileContainer'),gap=8,size=tc.clientWidth,cell=size/SIZE;
-  if(!size)return;
-  tc.innerHTML='';
-  let max=0;
-  for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){
-    let v=g[y][x];if(!v)continue;
-    if(v>max)max=v;
-    let el=document.createElement('div');el.className='tile';
-    let cls='tile-'+(v>2048?'super':v);
-    el.classList.add(cls);
-    el.style.width=cell-gap+'px';el.style.height=cell-gap+'px';
-    el.style.left=x*cell+gap/2+'px';el.style.top=y*cell+gap/2+'px';
-    el.style.fontSize=getSize(v)+'px';
-    el.textContent=v;
-    if(movedData&&movedData.newTile&&movedData.newTile[0]===y&&movedData.newTile[1]===x){
-      el.style.transform='scale(0)';el.classList.add('tile-new');
-      requestAnimationFrame(()=>{el.style.transform='scale(1)'})
-    }
-    if(movedData&&movedData.merged){
-      for(let [my,mx] of movedData.merged){if(my===y&&mx===x){
-        el.classList.add('tile-merged');
-        el.style.transform='scale(1.2)';requestAnimationFrame(()=>{el.style.transform='scale(1)'})
-      }}
-    }
-    tc.appendChild(el);
+// ── 背景飘落爱心 ──
+(function(){
+  const container = document.getElementById('fallingHearts');
+  const emojis = ['💕','💗','❤','💖','💘','💝'];
+  for(let i=0; i<18; i++){
+    const span = document.createElement('span');
+    span.textContent = emojis[i % emojis.length];
+    span.style.left = Math.random() * 100 + '%';
+    span.style.fontSize = (12 + Math.random() * 18) + 'px';
+    span.style.animationDuration = (8 + Math.random() * 12) + 's';
+    span.style.animationDelay = (Math.random() * 15) + 's';
+    container.appendChild(span);
   }
-  // update score display
-  let total=0;for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++)total+=g[y][x];
-  // track gameScore more simply
-}
-
-// ─── Proper Game State ──────────────────────────────────────
-let state={grid:emptyGrid(),score:0,over:0,won:0,skipWin:0};
-function startGame(){
-  state.grid=emptyGrid();state.score=0;state.over=0;state.won=0;state.skipWin=0;
-  spawn(state.grid);spawn(state.grid);
-  $('#gameOver').classList.remove('show');
-  $('#gameWin').classList.remove('show');
-  renderAll();
-}
-function renderAll(movedData){
-  const g=state.grid;
-  $('#score').textContent=state.score;
-  if(state.score>best){best=state.score;localStorage.setItem('g2048_best',best);$('#best').textContent=best}
-  const tc=$('#tileContainer'),gap=8,size=tc.clientWidth,cell=size/SIZE;
-  if(!size){requestAnimationFrame(renderAll);return}
-  tc.innerHTML='';
-  let max=0;
-  for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){
-    let v=g[y][x];if(!v)continue;
-    if(v>max)max=v;
-    let el=document.createElement('div');el.className='tile';
-    let cls='tile-'+(v>2048?'super':v);
-    el.classList.add(cls);
-    el.style.width=cell-gap+'px';el.style.height=cell-gap+'px';
-    el.style.left=x*cell+gap/2+'px';el.style.top=y*cell+gap/2+'px';
-    el.style.fontSize=getSize(v)+'px';
-    el.textContent=v;
-    if(movedData&&movedData.newTile&&movedData.newTile[0]===y&&movedData.newTile[1]===x&&movedData.newTile[2]===v){
-      el.style.transform='scale(0)';el.classList.add('tile-new');
-      requestAnimationFrame(()=>{el.style.transform='scale(1)'})
-    }
-    if(movedData&&movedData.merged){
-      for(let [my,mx] of movedData.merged){if(my===y&&mx===x){
-        el.classList.add('tile-merged');
-        el.style.transform='scale(1.2)';requestAnimationFrame(()=>{el.style.transform='scale(1)'})
-      }}
-    }
-    tc.appendChild(el);
-  }
-  if(max>=2048&&!state.skipWin&&!state.over){
-    $('#gameWin').classList.add('show');
-  }
-}
-
-// ─── Move Action ────────────────────────────────────────────
-function action(dir){
-  if(state.over||state.won)return;
-  let g=state.grid;
-  let old=clone(g);
-  let p=move(g,dir);
-  let movedData={merged:[],newTile:null};
-  // find merged tiles by comparing
-  let mergedTiles=[];
-  for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){
-    if(g[y][x]!==0&&g[y][x]!==old[y][x]&&old[y][x]!==0&&g[y][x]!==old[y][x]*2){
-      // actually merged tiles have value = old*2
-    }
-    if(g[y][x]!==0&&old[y][x]!==0&&g[y][x]===old[y][x]*2){
-      mergedTiles.push([y,x]);
-    }
-  }
-  // Actually simpler: compare grid for doubled values
-  // Let's just do it properly
-  let merged=[];
-  for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){
-    if(g[y][x]!==0&&old[y][x]!==0&&g[y][x]===old[y][x]*2){
-      merged.push([y,x]);
-    }
-  }
-  movedData.merged=merged;
-  
-  if(p){
-    let addScore=state.score; // we set score in move()
-    // Actually we track score via closure - let's fix
-    // We already added to state.score in move()... no, move() uses local score var
-    // Let's recalc properly
-    // Recalc score change
-    let diff=0;
-    for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){
-      if(g[y][x]!==0&&old[y][x]!==0&&g[y][x]===old[y][x]*2){
-        diff+=g[y][x];
-      }
-    }
-    state.score+=diff;
-    
-    spawn(g);
-    // find new tile
-    for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){
-      if(g[y][x]!==0&&old[y][x]===0){
-        // check not merged
-        let isMerged=false;
-        for(let [my,mx] of merged){if(my===y&&mx===x)isMerged=true}
-        if(!isMerged)movedData.newTile=[y,x,g[y][x]];
-      }
-    }
-    renderAll(movedData);
-    
-    // check game over
-    if(!canMove(g)){
-      state.over=1;
-      setTimeout(()=>{
-        if(state.over&&!state.won)$('#gameOver').classList.add('show');
-      },300);
-    }
-  }
-}
-
-function canMove(g){
-  for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){
-    if(!g[y][x])return 1;
-    if(x+1<SIZE&&g[y][x]===g[y][x+1])return 1;
-    if(y+1<SIZE&&g[y][x]===g[y+1][x])return 1;
-  }
-  return 0;
-}
-
-// Move helper that uses state.score
-function move(g,d){
-  let p=0;
-  for(let i=0;i<SIZE;i++){
-    let r=[];
-    for(let j=0;j<SIZE;j++){
-      if(d==='l')r.push(g[i][j]);
-      else if(d==='r')r.push(g[i][SIZE-1-j]);
-      else if(d==='u')r.push(g[j][i]);
-      else if(d==='d')r.push(g[SIZE-1-j][i]);
-    }
-    let f=r.filter(v=>v);
-    let n=Array(SIZE).fill(0),s=0;
-    for(let k=0;k<f.length;k++){
-      if(k+1<f.length&&f[k]===f[k+1]){
-        n[s]=f[k]*2;state.score+=n[s];k++;
-      }else{n[s]=f[k]}s++;
-    }
-    if(d==='r')n=n.reverse();
-    else if(d==='d')n=n.reverse();
-    let col=n;
-    for(let j=0;j<SIZE;j++){
-      if(d==='l'){if(g[i][j]!==col[j])p=1;g[i][j]=col[j]}
-      else if(d==='r'){if(g[i][j]!==col[j])p=1;g[i][j]=col[j]}
-      else if(d==='u'){if(g[j][i]!==col[j])p=1;g[j][i]=col[j]}
-      else if(d==='d'){if(g[j][i]!==col[j])p=1;g[j][i]=col[j]}
-    }
-  }
-  return p;
-}
-
-// ─── Input: Swipe ───────────────────────────────────────────
-let touchStartX=0,touchStartY=0;
-$('#grid').addEventListener('touchstart',e=>{
-  let t=e.touches[0];touchStartX=t.clientX;touchStartY=t.clientY;
-},{passive:1});
-$('#grid').addEventListener('touchend',e=>{
-  let t=e.changedTouches[0];
-  let dx=t.clientX-touchStartX,dy=t.clientY-touchStartY;
-  let adx=Math.abs(dx),ady=Math.abs(dy);
-  if(Math.max(adx,ady)<20)return;
-  if(adx>ady)action(dx>0?'r':'l');
-  else action(dy>0?'d':'u');
-},{passive:1});
-
-// ─── Input: Keyboard ────────────────────────────────────────
-document.addEventListener('keydown',e=>{
-  const map={ArrowLeft:'l',ArrowRight:'r',ArrowUp:'u',ArrowDown:'d'};
-  if(map[e.key]){e.preventDefault();action(map[e.key])}
-});
-
-// ─── Buttons ─────────────────────────────────────────────────
-$('#btnNew').addEventListener('click',startGame);
-$('#retryBtn').addEventListener('click',startGame);
-$('#winRetryBtn').addEventListener('click',startGame);
-$('#keepGoing').addEventListener('click',()=>{
-  state.skipWin=1;$('#gameWin').classList.remove('show')
-});
-
-// ─── Init ───────────────────────────────────────────────────
-startGame();
-
-// ─── Fix score tracker ──────────────────────────────────────
-// We already integrate score in move()
-// Need to reset score on start
-const origStart=startGame;
-startGame=function(){
-  state.grid=emptyGrid();state.score=0;state.over=0;state.won=0;state.skipWin=0;
-  spawn(state.grid);spawn(state.grid);
-  $('#gameOver').classList.remove('show');
-  $('#gameWin').classList.remove('show');
-  renderAll();
-};
-startGame();
-
-// ─── Track score properly ───────────────────────────────────
-// Override: move already modifies state.score
-// renderAll displays state.score
-// But startGame resets state.score. So we're good.
-// Just replace startGame one more time cleanly
-
-// Final cleanup - redefine properly
-state.grid=emptyGrid();state.score=0;state.over=0;state.won=0;state.skipWin=0;
-spawn(state.grid);spawn(state.grid);
-renderAll();
-
-// Re-bind start
-$('#btnNew').onclick=$('#retryBtn').onclick=$('#winRetryBtn').onclick=function(){startGame()};
-$('#keepGoing').onclick=function(){state.skipWin=1;$('#gameWin').classList.remove('show')};
+})();
 </script>
 </body>
 </html>
