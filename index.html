@@ -7,134 +7,100 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
-  background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: #0d0d1a;
   min-height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
   overflow: hidden;
 }
-.container{position:relative;width:500px;height:500px;max-width:95vw;max-height:95vw}
-canvas{position:absolute;inset:0;width:100%;height:100%}
-.falling-hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
-.falling-hearts span{
-  position:absolute;top:-10%;font-size:20px;animation:fall linear infinite;
-  opacity:.15;
-}
-@keyframes fall{
-  0%{transform:translateY(-10vh) rotate(0deg);opacity:0}
-  10%{opacity:.15}
-  90%{opacity:.15}
-  100%{transform:translateY(110vh) rotate(720deg);opacity:0}
-}
+canvas{display:block;width:600px;height:600px;max-width:98vw;max-height:98vw;border-radius:20px}
 .bottom-text{
-  position:fixed;bottom:30px;left:0;right:0;text-align:center;
-  color:rgba(255,255,255,.25);font-size:14px;letter-spacing:2px;z-index:5;
+  position:fixed;bottom:24px;left:0;right:0;text-align:center;
+  color:rgba(255,255,255,.2);font-size:13px;letter-spacing:3px;z-index:5;
   font-weight:300;
 }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <canvas id="heartCanvas"></canvas>
-</div>
-
-<div class="falling-hearts" id="fallingHearts"></div>
-<div class="bottom-text">💕 100次想念，每一次都是你</div>
+<canvas id="c"></canvas>
+<div class="bottom-text">💕 100 次想念，拼成一颗心</div>
 
 <script>
-const canvas = document.getElementById('heartCanvas');
+const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 
 function resize(){
-  const rect = canvas.parentElement.getBoundingClientRect();
-  canvas.width = rect.width * window.devicePixelRatio;
-  canvas.height = rect.height * window.devicePixelRatio;
+  const s = Math.min(window.innerWidth * 0.95, window.innerHeight * 0.85, 600);
+  canvas.width = s * window.devicePixelRatio;
+  canvas.height = s * window.devicePixelRatio;
   ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-  canvas.style.width = rect.width + 'px';
-  canvas.style.height = rect.height + 'px';
-  return {w: rect.width, h: rect.height};
+  canvas.style.width = s + 'px';
+  canvas.style.height = s + 'px';
+  return s;
 }
 
-const points = [(252.06653110915028, 212.06653110915028, 0), (247.86163912879846, 206.67755725894656, 1), (253.17721391979666, 208.27418639658984, 2), (249.90154809412928, 198.5826048400638, 3), (251.86155165011363, 191.38831751358967, 4), (257.34731353933233, 185.06053879530512, 5), (262.93465041549877, 176.36941142763945, 6), (266.23326054872786, 163.22413075900747, 7), (273.4053556133913, 152.17751950174264, 8), (284.2385224297508, 143.4816457187963, 9), (295.9171730407464, 134.83979843439758, 10), (307.72833351638235, 126.09158547958248, 11), (321.7025962727067, 119.83299271712035, 12), (335.32503693116337, 114.10716468809481, 13), (350.1089902628465, 110.95965522728397, 14), (371.4013562193068, 116.22752694832273, 15), (383.9975670542219, 115.14096206046496, 16), (400.86769479928563, 121.0392006453304, 17), (414.02516767552254, 126.232411916946, 18), (431.1088449176719, 138.58019225705323, 19), (445.1273069230114, 151.23531755331112, 20), (451.5339110842083, 159.72092597562786, 21), (465.0558782294362, 178.76391353661197, 22), (471.29194454032995, 193.89852776749117, 23), (473.9506343437177, 208.71164172801355, 24), (473.2617738143423, 223.26177381434232, 25), (474.16032401409586, 242.27043412386243, 26), (469.63373635044763, 258.4765915453575, 27), (459.98436497158957, 271.90549930679293, 28), (453.83292852807926, 290.87770027951257, 29), (442.92795825359923, 306.8231065213767, 30), (427.11975944125817, 319.2587588959593, 31), (413.4021091986429, 334.8336725929563, 32), (401.1577618798318, 352.5771018908843, 33), (385.0020427023799, 366.7448143545886, 34), (368.9020710038571, 380.9412384798618, 35), (351.4402221598351, 393.3863934752521, 36), (337.8630133443983, 408.9690292548167, 37), (322.6920143688975, 421.86273462063133, 38), (306.27316366254263, 432.08144174582594, 39), (295.2403977289293, 445.95016076005834, 40), (283.7466024228354, 457.34375167421524, 41), (275.8816812478522, 470.11320757852843, 42), (264.5215749957532, 476.94285862243197, 43), (260.6258251884558, 488.6555867362759, 44), (255.24115585629866, 496.22297891532884, 45), (255.77487157040397, 507.0436649491026, 46), (250.58483786654523, 509.5360900496096, 47), (250.72995525895914, 514.8891958044802, 48), (247.45675752218057, 514.5463187594129, 49), (249.9852194125516, 517.9852194125516, 50), (248.40565291213196, 515.6061214776125, 51), (252.42912086176483, 517.4703779842083, 52), (249.2290885284418, 511.12786137466196, 53), (249.03659472364032, 507.19591432571707, 54), (240.932135755622, 495.13376555464043, 55), (241.62090521522086, 491.99988658889856, 56), (229.96513032176665, 476.9669418679033, 57), (225.43942253249875, 469.7611897773849, 58), (213.88463456622333, 456.40274038332467, 59), (203.35808305579587, 445.04536103213877, 60), (191.95286842055313, 433.7892588944835, 61), (180.71277719469066, 423.5938418475756, 62), (162.8998493700704, 407.5478372422297, 63), (147.3889305367395, 394.2711399254295, 64), (130.878560625858, 380.13753484185094, 65), (112.59642315761681, 363.99605561930036, 66), (96.71297120022805, 349.60389389330163, 67), (85.51243511816415, 338.81915550352375, 68), (71.0593557576021, 323.29053512604395, 69), (59.765146561578966, 309.04723256128517, 70), (45.39830586971549, 289.53150603156683, 71), (35.1339379782814, 271.6683162145499, 72), (29.936139810863622, 256.26450106692226, 73), (29.481794254395016, 242.94505719767386, 74), (25.705070804870054, 223.7050708048701, 75), (26.546763429821667, 206.66092364763003, 76), (33.051939184126, 193.14402847243593, 77), (39.580246922154274, 177.90152613039538, 78), (44.327802765790636, 159.6032460676283, 79), (55.93547781359533, 147.4304261758237, 80), (69.98955252575107, 137.5530797788732, 81), (81.93074482027866, 126.01314605274881, 82), (99.24114567779195, 120.88423420585785, 83), (116.56075637766382, 117.36101219338177, 84), (129.58762886813045, 111.6336063371346, 85), (149.2811365791321, 115.06783961684282, 86), (161.10474282320715, 113.4288425418797, 87), (177.52976106131317, 119.37050190687778, 88), (189.47248779241983, 123.86385214626684, 89), (202.73326521191936, 132.63340555078435, 90), (213.04064484406075, 141.20472469882762, 91), (224.4811472286148, 153.34355203117607, 92), (235.18379619642957, 166.75519432616696, 93), (239.10619940829102, 174.89018024628925, 94), (244.9510654998645, 185.88409749582553, 95), (245.77830274905907, 192.19559483591308, 96), (246.69346315602115, 198.32204056511148, 97), (248.6973809521152, 204.67637000583065, 98), (249.36841478553794, 208.29524024393416, 99)];
+const points = [(302.8, 252.1), (297.1, 251.5), (304.2, 248.5), (299.6, 239.1), (301.8, 227.4), (308.5, 222.6), (315.1, 212.1), (318.4, 195.0), (326.4, 189.5), (339.1, 173.2), (352.6, 163.0), (365.9, 154.9), (381.9, 148.4), (397.2, 143.5), (414.0, 141.1), (439.3, 135.7), (453.0, 142.4), (472.4, 150.6), (487.1, 157.7), (507.2, 169.4), (523.5, 181.5), (529.9, 196.4), (546.3, 208.3), (553.4, 232.3), (556.2, 249.8), (555.0, 269.4), (556.5, 282.8), (551.2, 306.0), (539.5, 320.4), (533.0, 340.9), (520.5, 358.7), (501.9, 375.1), (486.3, 393.3), (472.8, 413.5), (454.3, 429.6), (435.9, 447.0), (415.7, 464.6), (400.6, 472.9), (383.2, 490.6), (364.0, 504.9), (351.7, 523.0), (338.4, 531.3), (329.7, 542.5), (316.1, 559.8), (312.0, 569.4), (305.7, 578.6), (307.0, 586.0), (300.5, 592.8), (300.9, 595.2), (296.6, 600.3), (300.0, 600.1), (297.9, 601.0), (303.3, 594.6), (299.3, 596.5), (299.4, 583.9), (289.2, 582.3), (291.0, 569.6), (276.6, 559.0), (272.0, 544.0), (258.4, 537.0), (246.5, 520.6), (233.7, 506.3), (221.3, 488.6), (200.4, 474.5), (182.7, 461.8), (163.8, 443.3), (142.5, 428.4), (124.3, 414.6), (112.3, 399.1), (95.7, 375.0), (83.1, 358.7), (66.0, 343.1), (54.0, 324.2), (48.2, 304.4), (48.4, 285.3), (43.6, 265.5), (44.5, 250.7), (52.4, 227.3), (59.9, 207.9), (64.5, 193.6), (78.0, 180.4), (94.3, 166.8), (107.5, 156.4), (127.7, 151.0), (147.8, 145.9), (162.0, 140.6), (185.2, 135.8), (198.0, 139.6), (217.1, 144.6), (230.3, 155.3), (245.6, 160.4), (257.3, 171.6), (270.7, 186.3), (283.5, 197.7), (287.6, 206.5), (294.5, 220.8), (295.0, 233.8), (295.9, 241.2), (298.3, 247.5), (299.2, 246.3)];
 
-let alpha = 0;
-const allColors = ['#ff4d6d', '#ff6b6b', '#ff8e8e', '#ffb3b3', '#ffc2d1', '#ff4d6d', '#c9184a', '#a4133c'];
+const allColors = ['#ff4d6d', '#ff6b6b', '#ff8e8e', '#ffb3b3', '#c9184a', '#a4133c', '#ff4d6d', '#800f2f'];
+let frame = 0;
 
-function drawHeart(){
-  const {w,h} = resize();
-  ctx.clearRect(0,0,w,h);
+function draw(){
+  const s = resize();
+  const ratio = s / 600;
+  ctx.clearRect(0,0,s,s);
 
-  // 发光效果
-  ctx.shadowColor = '#ff4d6d';
-  ctx.shadowBlur = 20;
-
-  // 绘制爱心连接线 (小点之间连线)
+  // 绘制柔和连接线（爱心轮廓更清晰）
   ctx.beginPath();
-  ctx.strokeStyle = 'rgba(255,77,109,0.08)';
+  ctx.strokeStyle = 'rgba(255,77,109,0.06)';
   ctx.lineWidth = 1;
   for(let i=0; i<points.length; i++){
     for(let j=i+1; j<points.length; j++){
-      const dx = points[i][0] - points[j][0];
-      const dy = points[i][1] - points[j][1];
-      if(dx*dx + dy*dy < 1200){
-        ctx.moveTo(points[i][0], points[i][1]);
-        ctx.lineTo(points[j][0], points[j][1]);
+      const dx = points[i][0]*ratio - points[j][0]*ratio;
+      const dy = points[i][1]*ratio - points[j][1]*ratio;
+      if(dx*dx + dy*dy < 2500){
+        ctx.moveTo(points[i][0]*ratio, points[i][1]*ratio);
+        ctx.lineTo(points[j][0]*ratio, points[j][1]*ratio);
       }
     }
   }
   ctx.stroke();
 
-  // 绘制每个字
-  ctx.shadowBlur = 12;
+  // 绘制 100 个「韩舒雨想你了」
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
+  ctx.shadowColor = '#ff4d6d';
 
-  const glow = 0.4 + 0.6 * Math.abs(Math.sin(alpha));
+  const glow = 0.5 + 0.5 * Math.sin(frame * 0.03);
 
   for(let i=0; i<points.length; i++){
-    const [x,y,idx] = points[i];
-    const color = allColors[idx % allColors.length];
+    const x = points[i][0] * ratio;
+    const y = points[i][1] * ratio;
+    const color = allColors[i % allColors.length];
 
-    // 光晕
+    // 每个文字大小微不同，更有层次
+    const size = 9 + 3 * Math.sin(frame * 0.05 + i * 0.5) + 2;
+    const fontSize = Math.max(8, Math.min(16, size * (s / 600)));
+
+    ctx.shadowBlur = 12 * glow;
     ctx.shadowColor = color;
-    ctx.shadowBlur = 15 * glow;
-
-    // 主文字
-    const size = 11 + 2 * Math.sin(alpha + i * 0.3);
-    ctx.font = `bold ${size}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+    ctx.font = `${fontSize}px "PingFang SC", "Microsoft YaHei", sans-serif`;
     ctx.fillStyle = color;
-    ctx.fillText('❤', x, y-1);
+    ctx.fillText('韩舒雨想你了', x, y);
 
-    // 小字标签
-    ctx.font = `${size * 0.7}px "PingFang SC", "Microsoft YaHei", sans-serif`;
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.shadowBlur = 8;
-    ctx.fillText('韩舒雨想你了', x, y + 2);
+    // 再画一次微偏移的亮色叠加，制造发光感
+    ctx.shadowBlur = 4;
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.fillText('韩舒雨想你了', x-0.5, y-0.5);
   }
 
-  alpha += 0.02;
-  requestAnimationFrame(drawHeart);
+  frame++;
+  requestAnimationFrame(draw);
 }
 
-drawHeart();
-
-// ── 背景飘落爱心 ──
-(function(){
-  const container = document.getElementById('fallingHearts');
-  const emojis = ['💕','💗','❤','💖','💘','💝'];
-  for(let i=0; i<18; i++){
-    const span = document.createElement('span');
-    span.textContent = emojis[i % emojis.length];
-    span.style.left = Math.random() * 100 + '%';
-    span.style.fontSize = (12 + Math.random() * 18) + 'px';
-    span.style.animationDuration = (8 + Math.random() * 12) + 's';
-    span.style.animationDelay = (Math.random() * 15) + 's';
-    container.appendChild(span);
-  }
-})();
+draw();
 </script>
 </body>
 </html>
